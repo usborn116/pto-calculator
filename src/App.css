@@ -5,6 +5,16 @@
   text-align: center;
 }
 
+.over{
+  color: red;
+}
+
+.pair{
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+}
+
 .table{
   display: flex;
   justify-content: space-between;
@@ -38,8 +48,15 @@
   }
 }
 
-.card {
+.form > form{
+  padding: 0em;
+}
+
+.card, form {
   padding: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em
 }
 
 .read-the-docs {

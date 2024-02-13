@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import './App.css'
 
 const restOfYear = (day: number) => {
@@ -19,7 +19,16 @@ type hrParam = {
 
 type dateLog = {
   date: Date,
-  hrs: number
+  hrs: number,
+  payday: boolean,
+  overMax: boolean
+}
+
+type formSubmission = {
+  target: { 
+    name: string,
+    value: string | number | Date 
+  }
 }
 
 const accrualTable: hrParam[]= [{rate: 3.34, max: 120},
@@ -32,70 +41,82 @@ const accrualTable: hrParam[]= [{rate: 3.34, max: 120},
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime())
 if (new Date() > firsts[0]){ firsts.shift()}
 const dates: dateLog[]= []
-firsts.forEach(f => dates.push({date: f, hrs: 0}))
-
-console.log(firsts)
+firsts.forEach(f => dates.push({date: f, hrs: 0, payday: true, overMax: false}))
 
 function App() {
   const [years, setYears] = useState(0)
   const [currHrs, setCurrHrs] = useState(0)
   const [hrsArr, setHrsArr] = useState([...dates])
-  const [added, setAdded] = useState<dateLog>({date: new Date(), hrs: 0})
+  const [added, setAdded] = useState<dateLog>({date: new Date(), hrs: 0, payday: false, overMax: false})
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
     hrsArr[0]['hrs'] = currHrs
-    for (let i = 1; i < firsts.length; i++){
-      const num = Number(hrsArr[i - 1]['hrs'] + acc).toFixed(2)
+    console.log('pre', hrsArr)
+    for (let i = 1; i < hrsArr.length; i++){
+      let num = null
+      if (hrsArr[i]['payday'] == true){
+        num = Number(hrsArr[i - 1]['hrs'] + acc).toFixed(2)
+      } else {
+        num = Number(hrsArr[i - 1]['hrs'] + hrsArr[i]['hrs']).toFixed(2)
+      }
       hrsArr[i]['hrs'] = Number(num)
+      if (Number(num) > accrualTable[years]['max']) hrsArr[i]['overMax'] = true
     }
     setHrsArr([...hrsArr])
   }
 
   const table = (
     <div className="table">
-      <div className='col'>{hrsArr.map((f, i) => <div key={i}>{f.date.toDateString()}</div>)}
+      <div className='col'>
+        <h2>Date</h2>
+        {hrsArr.map((f, i) => <div key={i}>{f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>)}
       </div>
-      <div className='col'>{hrsArr.map((f, i) => <div key={i}>{f.hrs}</div>)}
+      <div className='col'>
+        <h2>Hours</h2>
+        {hrsArr.map((f, i) => <div key={i} className={f.overMax ? 'over' : ''}>{f.hrs}</div>)}
       </div>
     </div>
   )
 
-  const handleChange = async (e) => {
+  const handleChange = async (e: formSubmission) => {
     const name = e.target.name
     const value = name == 'date' ? new Date(e.target?.value) : 0 - Number(e.target?.value)
-    console.log(new Date(e.target?.value))
     setAdded(values => ({...values, [name]: value}))
-    console.log(added)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     hrsArr.push(added)
-    console.log(hrsArr)
     hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     ptoParams()
     setHrsArr([...hrsArr])
   }
   return (
     <>
-      <h1>PTO Planner</h1>
-      <div>
-        It's {(new Date()).toDateString()}
-      </div>
+      <h1>Vacation Planner</h1>
       <div className="card">
-        <label>How many years have you been at Planning Center?</label><br></br>
-        <input type='number' onChange={(e) => setYears(() => Number(e.target.value))}/><br></br>
-        <label>How many hours of PTO do you currently have?</label><br></br>
+        <div className="pair">
+        <label>Years @ Planning Center</label><br></br>
+        <input type='number' onChange={(e) => setYears(() => Number(e.target.value))}/>
+        </div>
+        <div className="pair">
+        <label>Current Vacation Hours</label><br></br>
         <input type='number' onChange={(e) => setCurrHrs(() => Number(e.target.value))}/>
-        <button onClick={() => ptoParams()}>Calculate!</button>
+        </div>
+        <button onClick={() => ptoParams()}>Calculate Vacation Days!</button>
         <div className="form">
             <form onSubmit={handleSubmit}>
-              <label>Enter a vacation date</label><br></br>
+              <h2>Add a Vacation Day!</h2>
+              <div className="pair">
+              <label>Vacation Date</label><br></br>
               <input type="date" name="date" onChange={handleChange}/>
-              <label>How many hours are you using?</label><br></br>
+              </div>
+              <div className="pair">
+              <label>Hours Using</label><br></br>
               <input type="number" name="hrs" onChange={handleChange}/>
-              <input type="submit" value="Submit"></input>
+              </div>
+              <input type="submit" value="Add it!"></input>
             </form>
         </div>
         {table}
@@ -106,4 +127,3 @@ function App() {
 }
 
 export default App
-
