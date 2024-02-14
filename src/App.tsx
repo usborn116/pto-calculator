@@ -1,81 +1,58 @@
 import { useState } from 'react'
 import './App.css'
-
-const restOfYear = (day: number) => {
-  const curr: Date = new Date()
-  const date = new Date(curr.getFullYear(), curr.getMonth(), day)
-  const arr: Date[] = []
-  for (let i = date.getMonth(); i < 12; i++){
-    arr.push(new Date(curr.getFullYear(), i, day))
-    date.setMonth(date.getMonth() + 1)
-  }
-  return arr
-}
-
-type hrParam = {
-  rate: number,
-  max: number
-}
-
-type dateLog = {
-  date: Date,
-  hrs: number,
-  payday: boolean,
-  overMax: boolean
-}
-
-type formSubmission = {
-  target: { 
-    name: string,
-    value: string | number | Date 
-  }
-}
-
-const accrualTable: hrParam[]= [{rate: 3.34, max: 120},
-                {rate: 3.76, max: 132},
-                {rate: 4.0, max: 144},
-                {rate: 4.34, max: 156},
-                {rate: 4.67, max: 168},
-                {rate: 5.0, max: 180}]
+import { dateLog, formSubmission, accrualTable } from './Types'
+import { restOfYear } from './Helpers'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime())
+
 if (new Date() > firsts[0]){ firsts.shift()}
-const dates: dateLog[]= []
-firsts.forEach(f => dates.push({date: f, hrs: 0, payday: true, overMax: false}))
+
+firsts.unshift(new Date())
+
+const dates: dateLog[] = []
+
+firsts.forEach(f => dates.push({date: f, hrs: 0, payday: true, overMax: false, totalHrs: 0}))
 
 function App() {
-  const [years, setYears] = useState(0)
-  const [currHrs, setCurrHrs] = useState(0)
+  const [years, setYears] = useState(-1)
+  const [currHrs, setCurrHrs] = useState(-1)
   const [hrsArr, setHrsArr] = useState([...dates])
-  const [added, setAdded] = useState<dateLog>({date: new Date(), hrs: 0, payday: false, overMax: false})
+  const [added, setAdded] = useState<dateLog>({date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0})
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
-    hrsArr[0]['hrs'] = currHrs
-    console.log('pre', hrsArr)
+    hrsArr[0]['totalHrs'] = currHrs
     for (let i = 1; i < hrsArr.length; i++){
-      let num = null
-      if (hrsArr[i]['payday'] == true){
-        num = Number(hrsArr[i - 1]['hrs'] + acc).toFixed(2)
-      } else {
-        num = Number(hrsArr[i - 1]['hrs'] + hrsArr[i]['hrs']).toFixed(2)
-      }
-      hrsArr[i]['hrs'] = Number(num)
-      if (Number(num) > accrualTable[years]['max']) hrsArr[i]['overMax'] = true
+      if (hrsArr[i]['payday'] == true) hrsArr[i]['hrs'] = acc
+      hrsArr[i]['totalHrs'] = Number((hrsArr[i]['hrs'] + hrsArr[i - 1]['totalHrs']).toFixed(2))
+      if (hrsArr[i]['totalHrs'] > accrualTable[years]['max']){
+        hrsArr[i]['totalHrs'] = accrualTable[years]['max']
+        hrsArr[i]['overMax'] = true
+       } else {
+        hrsArr[i]['overMax'] = false
+       }
     }
     setHrsArr([...hrsArr])
   }
 
   const table = (
     <div className="table">
-      <div className='col'>
+
+      <div className="row">
         <h2>Date</h2>
-        {hrsArr.map((f, i) => <div key={i}>{f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>)}
-      </div>
-      <div className='col'>
         <h2>Hours</h2>
-        {hrsArr.map((f, i) => <div key={i} className={f.overMax ? 'over' : ''}>{f.hrs}</div>)}
+        <h2>Total</h2>
       </div>
+
+      {hrsArr.map((f, i) => (
+        <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
+          <div>{f.date.toLocaleDateString('en-us', { timeZone: 'America/Los_Angeles'})}</div>
+          <div>{f.hrs}</div>
+          <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
+        </div>
+        )
+      )}
+        
     </div>
   )
 
@@ -90,21 +67,29 @@ function App() {
     hrsArr.push(added)
     hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     ptoParams()
+    //setAdded(values => ({...values, date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0}))
     setHrsArr([...hrsArr])
   }
+
   return (
     <>
       <h1>Vacation Planner</h1>
+      <div className="layout">
       <div className="card">
+        <h2>Initial Information</h2>
         <div className="pair">
         <label>Years @ Planning Center</label><br></br>
-        <input type='number' onChange={(e) => setYears(() => Number(e.target.value))}/>
+        <input type='number' onChange={(e) => setYears(() => Number(e.target.value) > 5 ? 5 : Number(e.target.value))}/>
         </div>
         <div className="pair">
         <label>Current Vacation Hours</label><br></br>
         <input type='number' onChange={(e) => setCurrHrs(() => Number(e.target.value))}/>
         </div>
         <button onClick={() => ptoParams()}>Calculate Vacation Days!</button>
+        { years > -1 ? 
+        <div>You accumulate {accrualTable[years]['rate']} hours per pay period, with a max of {accrualTable[years]['max']}</div> :
+        ''
+        }
         <div className="form">
             <form onSubmit={handleSubmit}>
               <h2>Add a Vacation Day!</h2>
@@ -119,9 +104,13 @@ function App() {
               <input type="submit" value="Add it!"></input>
             </form>
         </div>
-        {table}
-        
+        <div className="key">
+          <div className='over'>Over Max Limit</div>
+          <div className='vacay'>Vacation Day!</div>
+        </div>
       </div>
+        {table}
+      </div> 
     </>
   )
 }

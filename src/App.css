@@ -1,12 +1,21 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 4rem;
   text-align: center;
+}
+
+.layout{
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
 }
 
 .over{
   color: red;
+}
+
+.vacay{
+  color: lightgreen;
 }
 
 .pair{
@@ -17,7 +26,17 @@
 
 .table{
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+}
+
+input[type='number'], input[type='date']{
+  width: 10em;
+}
+
+.row{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .logo {
