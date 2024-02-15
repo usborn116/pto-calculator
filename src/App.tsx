@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import { dateLog, formSubmission, accrualTable } from './Types'
-import { restOfYear } from './Helpers'
+import { DateLog } from './Types'
+import { restOfYear, accrualTable } from './Helpers'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime())
 
@@ -9,15 +9,15 @@ if (new Date() > firsts[0]){ firsts.shift()}
 
 firsts.unshift(new Date())
 
-const dates: dateLog[] = []
+const dates: DateLog[] = []
 
 firsts.forEach(f => dates.push({date: f, hrs: 0, payday: true, overMax: false, totalHrs: 0}))
 
 function App() {
-  const [years, setYears] = useState(-1)
-  const [currHrs, setCurrHrs] = useState(-1)
-  const [hrsArr, setHrsArr] = useState([...dates])
-  const [added, setAdded] = useState<dateLog>({date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0})
+  const [years, setYears] = useState<number>(-1)
+  const [currHrs, setCurrHrs] = useState<number>(-1)
+  const [hrsArr, setHrsArr] = useState<DateLog[]>([...dates])
+  const [added, setAdded] = useState<DateLog>({date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0})
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
@@ -46,7 +46,7 @@ function App() {
 
       {hrsArr.map((f, i) => (
         <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
-          <div>{f.date.toLocaleDateString('en-us', { timeZone: 'America/Los_Angeles'})}</div>
+          <div>{f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
           <div>{f.hrs}</div>
           <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
         </div>
@@ -56,7 +56,7 @@ function App() {
     </div>
   )
 
-  const handleChange = async (e: formSubmission) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name
     const value = name == 'date' ? new Date(e.target?.value) : 0 - Number(e.target?.value)
     setAdded(values => ({...values, [name]: value}))
