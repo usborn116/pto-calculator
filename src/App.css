@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+h2{
+  margin-bottom: 0;
+}
+
 .layout{
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -12,6 +16,13 @@
 
 .over{
   color: red;
+}
+
+.banner{
+  padding: 1em;
+  border: 1px solid darkolivegreen;
+  border-radius: 5px;
+  background-color: darkslategray;
 }
 
 .vacay{
@@ -75,7 +86,8 @@ input[type='number'], input[type='date']{
   padding: 2em;
   display: flex;
   flex-direction: column;
-  gap: 1em
+  gap: 1em;
+  text-align: left;
 }
 
 .read-the-docs {

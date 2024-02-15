@@ -74,9 +74,11 @@ function App() {
   return (
     <>
       <h1>Vacation Planner</h1>
+      <h3>Enter some possible vacation days and see how it affects your accumulated vacation hours over time.</h3>
       <div className="layout">
       <div className="card">
         <h2>Initial Information</h2>
+        <p>Enter some initial info to see how your vacation time will accrue for the rest of the year!</p>
         <div className="pair">
         <label>Years @ Planning Center</label><br></br>
         <input type='number' onChange={(e) => setYears(() => Number(e.target.value) > 5 ? 5 : Number(e.target.value))}/>
@@ -85,9 +87,9 @@ function App() {
         <label>Current Vacation Hours</label><br></br>
         <input type='number' onChange={(e) => setCurrHrs(() => Number(e.target.value))}/>
         </div>
-        <button onClick={() => ptoParams()}>Calculate Vacation Days!</button>
+        <button onClick={() => ptoParams()}>Calculate Accrual!</button>
         { years > -1 ? 
-        <div>You accumulate {accrualTable[years]['rate']} hours per pay period, with a max of {accrualTable[years]['max']}</div> :
+        <div className='banner'>You accumulate {accrualTable[years]['rate']} hours per pay period, up to {accrualTable[years]['max']} hours</div> :
         ''
         }
         <div className="form">
@@ -98,8 +100,8 @@ function App() {
               <input type="date" name="date" onChange={handleChange}/>
               </div>
               <div className="pair">
-              <label>Hours Using</label><br></br>
-              <input type="number" name="hrs" onChange={handleChange}/>
+              <label>Hours</label><br></br>
+              <input type="number" max={8} name="hrs" onChange={handleChange}/>
               </div>
               <input type="submit" value="Add it!"></input>
             </form>
