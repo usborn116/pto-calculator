@@ -7,7 +7,7 @@ const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() 
 
 if (new Date() > firsts[0]){ firsts.shift()}
 
-firsts.unshift(new Date())
+if (new Date().getDay() != firsts[0].getDay()) firsts.unshift(new Date())
 
 const dates: DateLog[] = []
 
@@ -38,7 +38,7 @@ function App() {
   const table = (
     <div className="table">
 
-      <div className="row">
+      <div className="row" id="header">
         <h2>Date</h2>
         <h2>Hours</h2>
         <h2>Total</h2>
@@ -46,7 +46,7 @@ function App() {
 
       {hrsArr.map((f, i) => (
         <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
-          <div>{f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
+          <div>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
           <div>{f.hrs}</div>
           <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
         </div>
