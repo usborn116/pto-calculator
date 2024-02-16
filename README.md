@@ -1,5 +1,9 @@
 # React + TypeScript + Vite
 
+This project is live at https://pco-pto.netlify.app/
+
+An app for my coworkers to see how possible vacation days impacts their vacation accrual!
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
