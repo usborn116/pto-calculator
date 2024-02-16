@@ -6,7 +6,6 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  
 }
 
 h2{
@@ -41,14 +40,21 @@ h2{
 }
 
 .over{
-  color: red;
+  color: #FF674D;
 }
 
 .banner{
   padding: 1em;
-  border: 1px solid darkolivegreen;
+  border: 1px solid rgb(67, 67, 204);
   border-radius: 5px;
-  background-color: darkslategray;
+  background-color: #373F51;
+}
+
+.key{
+  text-align: right;
+  padding: 1em;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .vacay{
@@ -88,13 +94,6 @@ input[type='number'], input[type='date']{
 
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
 }
 
 @media (max-width: 750px) {

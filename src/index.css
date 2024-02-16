@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #262626;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -42,12 +42,12 @@ button, input[type='submit'] {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #663F46;
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover, input[type='submit']:hover {
-  border-color: #646cff;
+  border-color: rgb(89, 139, 106);
 }
 button:focus,
 button:focus-visible {
