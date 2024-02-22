@@ -1,5 +1,5 @@
 import { HrParam } from "./Types"
-export const restOfYear = (day: number) => {
+export const restOfYear = (day: number): Date[] => {
     const curr: Date = new Date()
     const date: Date = new Date(curr.getFullYear(), curr.getMonth(), day)
     const arr: Date[] = []

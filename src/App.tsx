@@ -96,8 +96,8 @@ function App() {
             <form onSubmit={handleSubmit}>
               <h2>Add a Vacation Day!</h2>
               <div className="pair">
-              <label>Vacation Date</label><br></br>
-              <input type="date" name="date" onChange={handleChange}/>
+              <label htmlFor="date">Vacation Date</label><br></br>
+              <input type="date" name="date" id="date" onChange={handleChange}/>
               </div>
               <div className="pair">
               <label>Hours</label><br></br>
