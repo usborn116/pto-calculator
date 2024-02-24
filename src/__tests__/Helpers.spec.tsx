@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event'
 
 const user = userEvent.setup()
 
-describe('creates correct dates', () => {
+describe('creates correct dates', async () => {
     const curr = new Date()
     const date = new Date(curr.getFullYear(), curr.getMonth(), 15)
     const arr = restOfYear(15)
@@ -42,7 +42,7 @@ describe('renders correct accumulation and max numbers', async () => {
 })
 
 
-describe('renders correct hours', async () => {
+describe('renders correct hours', () => {
     const years = screen.getAllByRole('spinbutton')[0]
     const hrs = screen.getAllByRole('spinbutton')[1]
     const vhrs = screen.getAllByRole('spinbutton')[2]
@@ -54,13 +54,13 @@ describe('renders correct hours', async () => {
     expect(hrs).toBeDefined()
     expect(date).toBeDefined()
     it('sets correct initial hours', async ({expect}) => {
-        await user.type(hrs, '15')
+        await user.type(hrs, '150')
         await user.click(calculate)
-        const fifteen = screen.getByText('15')
+        const fifteen = screen.getByText('150')
         expect(fifteen).toBeDefined()
-        const twenty = screen.getByText('20')
+        const twenty = screen.getByText('155')
         expect(twenty).toBeDefined()
-        const twentyFive = screen.getByText('25')
+        const twentyFive = screen.getByText('160')
         expect(twentyFive).toBeDefined()
     })
 
@@ -72,7 +72,10 @@ describe('renders correct hours', async () => {
         expect(screen.getByText('-3')).toBeDefined()
     })
 
-    
+    it('does not go past the max hours', ({expect}) => {
+        expect(screen.getAllByText('180').length).toBeGreaterThan(0)
+        expect(screen.queryAllByText('185').length).toBe(0)
+    })
 
 })
 
