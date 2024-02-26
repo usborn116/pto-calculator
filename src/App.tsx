@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { DateLog } from './Types'
+import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
@@ -15,7 +15,8 @@ function App() {
   const [years, setYears] = useState<number>(-1)
   const [currHrs, setCurrHrs] = useState<number>(-1)
   const [hrsArr, setHrsArr] = useState<DateLog[]>([...dates])
-  const [added, setAdded] = useState<DateLog>({date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0})
+  const [added, setAdded] = useState<DateLog[]>([])
+  const [startEnd, setStartEnd] = useState<StartEndDate>({start: null, end: null})
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
@@ -60,12 +61,28 @@ function App() {
     setAdded(values => ({...values, [name]: value}))
   }
 
+  const handleStartEndChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name
+    const value = new Date(new Date(e.target?.value).toLocaleDateString('en-us', { timeZone: 'UTC'}))
+    setStartEnd(values => ({...values, [name]: value}))
+  }
+
+  if (startEnd.start && startEnd.end){
+    const date = startEnd.start
+    while (date <= startEnd.end){
+      added.push({date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC'})), hrs: 0, payday: false, overMax: false, totalHrs: 0})
+      date.setDate(date.getDate() + 1)
+    }
+    console.log('added', added)
+  } else {
+    console.log('not yet')
+  }
+
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     hrsArr.push(added)
     hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     ptoParams()
-    //setAdded(values => ({...values, date: new Date(), hrs: 0, payday: false, overMax: false, totalHrs: 0}))
     setHrsArr([...hrsArr])
   }
 
@@ -95,13 +112,13 @@ function App() {
               <h2>Add a Vacation Day!</h2>
 
               <div className="pair">
-              <label htmlFor="date">Vacation Start Date</label><br></br>
-              <input type="date" name="date" id="date" onChange={handleChange}/>
+              <label htmlFor="start">Vacation Start Date</label><br></br>
+              <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
               </div>
 
               <div className="pair">
-              <label htmlFor="date">Vacation End Date</label><br></br>
-              <input type="date" name="datez" id="datez" onChange={() => {}}/>
+              <label htmlFor="end">Vacation End Date</label><br></br>
+              <input type="date" name="end" id="end" onChange={handleStartEndChange}/>
               </div>
 
               <div className="pair">

@@ -11,3 +11,8 @@ export type DateLog = {
     overMax: boolean,
     totalHrs: number
   }
+
+export type StartEndDate = {
+  start: Date | null,
+  end: Date | null
+}
