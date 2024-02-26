@@ -3,9 +3,7 @@ import './App.css'
 import { DateLog } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
 
-const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime())
-
-if (new Date() > firsts[0]){ firsts.shift()}
+const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
 if (new Date().getDay() != firsts[0].getDay()) firsts.unshift(new Date())
 
@@ -95,10 +93,17 @@ function App() {
         <div className="form">
             <form onSubmit={handleSubmit}>
               <h2>Add a Vacation Day!</h2>
+
               <div className="pair">
-              <label htmlFor="date">Vacation Date</label><br></br>
+              <label htmlFor="date">Vacation Start Date</label><br></br>
               <input type="date" name="date" id="date" onChange={handleChange}/>
               </div>
+
+              <div className="pair">
+              <label htmlFor="date">Vacation End Date</label><br></br>
+              <input type="date" name="datez" id="datez" onChange={() => {}}/>
+              </div>
+
               <div className="pair">
               <label>Hours</label><br></br>
               <input type="number" max={8} name="hrs" onChange={handleChange}/>
