@@ -36,13 +36,11 @@ function App() {
 
   const table = (
     <div className="table">
-
       <div className="row" id="header">
         <h2>Date</h2>
         <h2>Hours</h2>
         <h2>Total</h2>
       </div>
-
       {hrsArr.map((f, i) => (
         <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
           <div>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
@@ -51,20 +49,22 @@ function App() {
         </div>
         )
       )}
-        
     </div>
   )
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name
-    const value = name == 'date' ? new Date(e.target?.value) : 0 - Number(e.target?.value)
-    setAdded(values => ({...values, [name]: value}))
+    const id = e.target.name.split('-')[0]
+    const value = 0 - Number(e.target?.value)
+    added[Number(id)]['hrs'] = value
+    setAdded([...added])
   }
 
-  const handleStartEndChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name
-    const value = new Date(new Date(e.target?.value).toLocaleDateString('en-us', { timeZone: 'UTC'}))
-    setStartEnd(values => ({...values, [name]: value}))
+  const handleStartEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement
+    const name = target.name
+    const value = new Date(new Date(target?.value).toLocaleDateString('en-us', { timeZone: 'UTC'}))
+    const insert = {[name]: value}
+    setStartEnd(values => ({...values, ...insert}))
   }
 
   if (startEnd.start && startEnd.end){
@@ -73,18 +73,37 @@ function App() {
       added.push({date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC'})), hrs: 0, payday: false, overMax: false, totalHrs: 0})
       date.setDate(date.getDate() + 1)
     }
-    console.log('added', added)
   } else {
     console.log('not yet')
   }
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const resetButton = () => {
+    (document.getElementById('vacayform') as HTMLFormElement).reset();
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    hrsArr.push(added)
+    added.forEach(a => hrsArr.push(a))
     hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     ptoParams()
+    setAdded([])
     setHrsArr([...hrsArr])
-  }
+    setStartEnd({start: null, end: null})
+    resetButton()
+  } 
+
+  const hrs = added.map((d, i) => (
+    <div key={i} className="hr-pair">
+      <label>{d.date.toLocaleDateString('en-us', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric'})} Hrs</label>
+      <input type="number" max={8} name={`${i}-hrs`} onChange={handleChange}/>
+    </div>
+  ))
+
+  const endDate = startEnd.start ? 
+    <div className="pair">
+      <label htmlFor="end">Vacation End Date</label>
+      <input type="date" name="end" id="end" onChange={handleStartEndChange}/>
+    </div> : ''
 
   return (
     <>
@@ -107,24 +126,20 @@ function App() {
         <div className='banner'>You accumulate {accrualTable[years]['rate']} hours per pay period, up to {accrualTable[years]['max']} hours</div> :
         ''
         }
+        { years > -1 && currHrs > -1 &&
+        <>
         <div className="form">
-            <form onSubmit={handleSubmit}>
-              <h2>Add a Vacation Day!</h2>
+            <form onSubmit={handleSubmit} id='vacayform'>
+              <h2>Add Vacation!</h2>
 
               <div className="pair">
-              <label htmlFor="start">Vacation Start Date</label><br></br>
+              <label htmlFor="start">Vacation Start Date</label>
               <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
               </div>
 
-              <div className="pair">
-              <label htmlFor="end">Vacation End Date</label><br></br>
-              <input type="date" name="end" id="end" onChange={handleStartEndChange}/>
-              </div>
+              {endDate}
 
-              <div className="pair">
-              <label>Hours</label><br></br>
-              <input type="number" max={8} name="hrs" onChange={handleChange}/>
-              </div>
+              {hrs}
               <input type="submit" value="Add it!"></input>
             </form>
         </div>
@@ -132,7 +147,11 @@ function App() {
           <div className='over'>Over Max Limit</div>
           <div className='vacay'>Vacation Day!</div>
         </div>
+        </>
+        }
       </div>
+      
+        
         {table}
       </div> 
     </>
