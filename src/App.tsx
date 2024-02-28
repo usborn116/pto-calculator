@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
@@ -34,6 +34,18 @@ function App() {
     setHrsArr([...hrsArr])
   }
 
+  useEffect(() => {
+    if (startEnd.start && startEnd.end){
+      const date = new Date(startEnd.start)
+      const newAdded = []
+      while (date <= startEnd.end){
+        newAdded.push({date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC'})), hrs: 0, payday: false, overMax: false, totalHrs: 0})  
+        date.setDate(date.getDate() + 1)
+      }
+      setAdded([...newAdded])
+    }
+  }, [startEnd])
+
   const table = (
     <div className="table">
       <div className="row" id="header">
@@ -67,16 +79,6 @@ function App() {
     setStartEnd(values => ({...values, ...insert}))
   }
 
-  if (startEnd.start && startEnd.end){
-    const date = startEnd.start
-    while (date <= startEnd.end){
-      added.push({date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC'})), hrs: 0, payday: false, overMax: false, totalHrs: 0})
-      date.setDate(date.getDate() + 1)
-    }
-  } else {
-    console.log('not yet')
-  }
-
   const resetButton = () => {
     (document.getElementById('vacayform') as HTMLFormElement).reset();
   }
@@ -90,14 +92,15 @@ function App() {
     setHrsArr([...hrsArr])
     setStartEnd({start: null, end: null})
     resetButton()
-  } 
+  }
 
-  const hrs = added.map((d, i) => (
+  const hrs = () => (added.map((d, i) => (
     <div key={i} className="hr-pair">
       <label>{d.date.toLocaleDateString('en-us', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric'})} Hrs</label>
       <input type="number" max={8} name={`${i}-hrs`} onChange={handleChange}/>
     </div>
   ))
+  )
 
   const endDate = startEnd.start ? 
     <div className="pair">
@@ -136,10 +139,8 @@ function App() {
               <label htmlFor="start">Vacation Start Date</label>
               <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
               </div>
-
               {endDate}
-
-              {hrs}
+              {hrs()}
               <input type="submit" value="Add it!"></input>
             </form>
         </div>
@@ -150,8 +151,6 @@ function App() {
         </>
         }
       </div>
-      
-        
         {table}
       </div> 
     </>
