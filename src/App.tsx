@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
-import { Reset } from './Reset'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -76,11 +75,11 @@ function App() {
     const target = e.target as HTMLInputElement
     const name = target.name
     const value = new Date(new Date(target?.value).toLocaleDateString('en-us', { timeZone: 'UTC'}))
-    const insert = {[name]: value}
-    setStartEnd(values => ({...values, ...insert}))
+    const insert = !startEnd.end ? {[name]: value, ['end']: value} : {[name]: value}
+    setStartEnd(({...startEnd, ...insert}))
   }
 
-  const resetButton = () => {
+  const resetButton = (): void => {
     (document.getElementById('vacayform') as HTMLFormElement).reset();
   }
 
@@ -95,12 +94,24 @@ function App() {
     resetButton()
   }
 
+  const resetDates = () => {
+    let idx = hrsArr.findIndex(d => d.payday == false)
+    while (idx > -1){
+      hrsArr.splice(idx, 1)
+      idx = hrsArr.findIndex(d => d.payday == false)
+    }
+    setHrsArr([...hrsArr])
+    setAdded([])
+    ptoParams()
+    resetButton()
+  }
+
   const hrs = () => (added.map((d, i) => (
     <div key={i} className="hr-pair">
       <label>{d.date.toLocaleDateString('en-us', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric'})} Hrs</label>
       <input type="number" max={8} name={`${i}-hrs`} onChange={handleChange}/>
     </div>
-  ))
+    ))
   )
 
   const endDate = startEnd.start ? 
@@ -146,7 +157,7 @@ function App() {
             </form>
         </div>
         <div className="pair">
-          <Reset />
+        <button className="reset" onClick={resetDates}> Reset Vacation Days </button>
           <div className="key">
             <div className='over'>Over Max Limit</div>
             <div className='vacay'>Vacation Day!</div>
