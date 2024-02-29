@@ -3,8 +3,9 @@ export const restOfYear = (day: number): Date[] => {
     const curr: Date = new Date()
     const date: Date = new Date(curr.getFullYear(), curr.getMonth(), day)
     const arr: Date[] = []
-    for (let i = date.getMonth(); i < 12; i++){
-      arr.push(new Date(curr.getFullYear(), i, day))
+    const [start, end] = [date.getMonth(), date.getMonth() + 13]
+    for (let i = start; i <= end; i++){
+      arr.push(new Date(date.getFullYear(), i%12, day))
       date.setMonth(date.getMonth() + 1)
     }
     return arr
