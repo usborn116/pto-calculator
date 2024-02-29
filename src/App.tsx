@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
+import { Reset } from './Reset'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -144,10 +145,14 @@ function App() {
               <input type="submit" value="Add it!"></input>
             </form>
         </div>
-        <div className="key">
-          <div className='over'>Over Max Limit</div>
-          <div className='vacay'>Vacation Day!</div>
+        <div className="pair">
+          <Reset />
+          <div className="key">
+            <div className='over'>Over Max Limit</div>
+            <div className='vacay'>Vacation Day!</div>
+          </div>
         </div>
+       
         </>
         }
       </div>
