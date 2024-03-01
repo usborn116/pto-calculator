@@ -9,15 +9,15 @@ import { describe, it } from 'vitest'
 
 //const user = userEvent.setup()
 
-describe('creates correct dates', async () => {
+describe('creates correct dates', async (): Promise<void> => {
     const curr = new Date()
     const date = new Date(curr.getFullYear(), curr.getMonth(), 15)
     const arr = restOfYear(15)
-    it('sets correct first date', ({expect}) => {
+    it('sets correct first date', ({expect}): void => {
         expect(arr[0]).toEqual(date)
     })
 
-    it('sets correct second date', ({expect}) => {
+    it('sets correct second date', ({expect}): void => {
         expect(arr[1]).toEqual(new Date(curr.getFullYear(), curr.getMonth() + 1, 15))
     })
 

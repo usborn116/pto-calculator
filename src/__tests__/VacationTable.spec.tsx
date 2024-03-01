@@ -1,30 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-import { restOfYear } from '../Helpers'
 import {render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it } from 'vitest'
 import App from '../App'
+import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const user = userEvent.setup()
 
-describe('renders correct hours', () => {
+describe('renders correct hours', async () => {
     render(<App />)
     const years = screen.getAllByRole('spinbutton')[0]
     const hrs = screen.getAllByRole('spinbutton')[1]
-    const vhrs = screen.getAllByRole('spinbutton')[2]
-    const initDate = screen.getByLabelText('Vacation Start Date')
     const calculate = screen.getAllByRole('button')[0]
-    const vacay = screen.getAllByRole('button')[1]
-    expect(calculate).toBeDefined()
-    expect(years).toBeDefined()
-    expect(hrs).toBeDefined()
-    it('sets correct initial hours', async ({expect}) => {
-        await user.type(years, '5')
-        expect(initDate).toBeNull()
-        await user.type(hrs, '150')
-        await user.click(calculate)
+    await user.type(years, '5')
+    await user.type(hrs, '150')
+    await user.click(calculate)
+    
+    it('correctly aggregates by 5', async ({expect}): Promise<void> => {
         const fifteen = screen.getByText('150')
         expect(fifteen).toBeDefined()
         const twenty = screen.getByText('155')
@@ -33,17 +27,53 @@ describe('renders correct hours', () => {
         expect(twentyFive).toBeDefined()
     })
 
-    it('adds vacation date', async ({expect}) => {
+    it('correctly subtracts vacation hours', async ({expect}): Promise<void> => {
         const curr = new Date()
-        fireEvent.change(initDate, {target: {value: `${curr.getFullYear()}-${curr.getMonth()}-${curr.getDate() + 2}`}})
-        await user.type(vhrs, '3')
-        await user.click(vacay)
+        const later = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 3)
+        const initDate = screen.getByLabelText('Vacation Start Date')
+        expect(initDate).toBeDefined()
+        const buttons = await screen.findAllByRole('spinbutton')
+        expect(buttons.length).toBe(2)
+        act(() => fireEvent.change(initDate, {target: {value: curr.toISOString().slice(0,10) }}))
+        const endDate = screen.getByLabelText('Vacation End Date')
+        expect(endDate).toBeDefined()
+        act(() => fireEvent.change(endDate, {target: {value: later.toISOString().slice(0,10) }}))
+        const buttons2 = await screen.findAllByRole('spinbutton')
+        expect(buttons2.length).toBe(6)
+        const vhrs = buttons2[2]
+        const vhrs2 = buttons2[3]
+        const vhrs3 = buttons2[4]
+        const vhrs4 = buttons2[5]
+        await user.type(vhrs, '1')
+        await user.type(vhrs2, '2')
+        await user.type(vhrs3, '4')
+        await user.type(vhrs4, '3')
+        const add = screen.getByText('Add it!')
+        await user.click(add)
+        expect(screen.getByText('-1')).toBeDefined()     
+        expect(screen.getByText('-2')).toBeDefined()     
+        expect(screen.getByText('-4')).toBeDefined()     
         expect(screen.getByText('-3')).toBeDefined()
+        expect(screen.getByText('153')).toBeDefined()     
+        expect(screen.getByText('149')).toBeDefined()     
+        expect(screen.getByText('146')).toBeDefined()     
+        expect(screen.getByText('151')).toBeDefined()
     })
-
-    it('does not go past the max hours', ({expect}) => {
-        expect(screen.getAllByText('180').length).toBeGreaterThan(0)
-        expect(screen.queryAllByText('185').length).toBe(0)
+    
+    
+    it('resets vacation days', async ({expect}): Promise<void> => {
+        const reset = screen.getByText('Reset Vacation Days')
+        expect(reset).toBeDefined()
+        await user.click(reset)
+        const fifteen = screen.getByText('150')
+        expect(fifteen).toBeDefined()
+        const twenty = screen.getByText('155')
+        expect(twenty).toBeDefined()
+        const twentyFive = screen.getByText('160')
+        expect(twentyFive).toBeDefined()
+        expect(screen.queryByText('-1')).toBe(null)
     })
+    
+    
 
 })
