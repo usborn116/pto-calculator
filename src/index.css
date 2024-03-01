@@ -54,6 +54,19 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.delete{
+  width: auto;
+  padding: 0.2em;
+  background-color: transparent;
+  color: red;
+
+}
+
+.delete:hover{
+  background-color: darkred;
+  color: white;
+}
+
 .reset{
   background-color: darkred;
 }

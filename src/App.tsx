@@ -58,7 +58,7 @@ function App() {
           <div>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
           <div>{f.hrs}</div>
           <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
-          <button>X</button>
+          { f.payday ? '' : <button className='delete' onClick={() => resetDates(f.date)}>X</button>}
         </div>
         )
       )}
@@ -95,11 +95,16 @@ function App() {
     resetButton()
   }
 
-  const resetDates = () => {
-    let idx = hrsArr.findIndex(d => d.payday == false)
-    while (idx > -1){
+  const resetDates = (date: Date | null = null) => {
+    if (!date){
+      let idx = hrsArr.findIndex(d => d.payday == false)
+      while (idx > -1){
+        hrsArr.splice(idx, 1)
+        idx = hrsArr.findIndex(d => d.payday == false)
+      }
+    } else {
+      const idx = hrsArr.findIndex(d => d.date == date)
       hrsArr.splice(idx, 1)
-      idx = hrsArr.findIndex(d => d.payday == false)
     }
     setHrsArr([...hrsArr])
     setAdded([])
@@ -158,7 +163,7 @@ function App() {
             </form>
         </div>
         <div className="pair">
-        <button className="reset" onClick={resetDates}> Reset Vacation Days </button>
+        <button className="reset" onClick={() => resetDates()}> Reset Vacation Days </button>
           <div className="key">
             <div className='over'>Over Max Limit</div>
             <div className='vacay'>Vacation Day!</div>
