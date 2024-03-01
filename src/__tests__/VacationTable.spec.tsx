@@ -61,6 +61,17 @@ describe('renders correct hours', async () => {
     })
     
     
+    it('deletes single vacation day and calculates accordingly', async ({expect}): Promise<void> => {
+        const deletes = screen.getAllByText('X')
+        const delete2 = deletes[1]
+        expect(delete2).toBeDefined()
+        await user.click(delete2)
+        expect(screen.queryByText('-2')).toBe(null)
+        expect(screen.queryByText('-4')).toBeDefined()
+        expect(screen.queryByText('149')).toBe(null)
+        expect(screen.getAllByText('151')).toBeDefined()
+    })
+    
     it('resets vacation days', async ({expect}): Promise<void> => {
         const reset = screen.getByText('Reset Vacation Days')
         expect(reset).toBeDefined()
@@ -73,6 +84,8 @@ describe('renders correct hours', async () => {
         expect(twentyFive).toBeDefined()
         expect(screen.queryByText('-1')).toBe(null)
     })
+
+    
     
     
 
