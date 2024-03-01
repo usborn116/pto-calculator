@@ -14,14 +14,15 @@ describe('renders correct hours', () => {
     const years = screen.getAllByRole('spinbutton')[0]
     const hrs = screen.getAllByRole('spinbutton')[1]
     const vhrs = screen.getAllByRole('spinbutton')[2]
-    const date = screen.getByLabelText('Vacation Date')
+    const initDate = screen.getByLabelText('Vacation Start Date')
     const calculate = screen.getAllByRole('button')[0]
     const vacay = screen.getAllByRole('button')[1]
     expect(calculate).toBeDefined()
     expect(years).toBeDefined()
     expect(hrs).toBeDefined()
-    expect(date).toBeDefined()
     it('sets correct initial hours', async ({expect}) => {
+        await user.type(years, '5')
+        expect(initDate).toBeNull()
         await user.type(hrs, '150')
         await user.click(calculate)
         const fifteen = screen.getByText('150')
@@ -34,7 +35,7 @@ describe('renders correct hours', () => {
 
     it('adds vacation date', async ({expect}) => {
         const curr = new Date()
-        fireEvent.change(date, {target: {value: `${curr.getFullYear()}-${curr.getMonth()}-${curr.getDate() + 2}`}})
+        fireEvent.change(initDate, {target: {value: `${curr.getFullYear()}-${curr.getMonth()}-${curr.getDate() + 2}`}})
         await user.type(vhrs, '3')
         await user.click(vacay)
         expect(screen.getByText('-3')).toBeDefined()

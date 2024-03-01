@@ -58,6 +58,7 @@ function App() {
           <div>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
           <div>{f.hrs}</div>
           <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
+          <button>X</button>
         </div>
         )
       )}
