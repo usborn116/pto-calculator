@@ -98,6 +98,23 @@ input[type='number'], input[type='date']{
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
+#editHourForm{
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
+  padding: 0em;
+}
+
+#editHourForm > input{
+  width: 90%;
+}
+
+#editHourForm > input[type='submit']{
+  width: auto;
+  padding: 0.2em;
+  background-color: transparent;
+  color: red;
+}
+
 @media (max-width: 750px) {
 
   .card{
