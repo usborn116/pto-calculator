@@ -82,12 +82,12 @@ input[type='number'], input[type='date']{
 
 .row{
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
+  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
   gap: 0.2em;
 }
 
 #header{
-  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
+  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
 }
 
 .row > div{

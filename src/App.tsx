@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
+import { DateEntry } from './DateEntry'
+import { HourField } from './HourField'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -46,6 +48,23 @@ function App() {
     }
   }, [startEnd])
 
+  const resetDates = (date: Date | null = null) => {
+    if (!date){
+      let idx = hrsArr.findIndex(d => d.payday == false)
+      while (idx > -1){
+        hrsArr.splice(idx, 1)
+        idx = hrsArr.findIndex(d => d.payday == false)
+      }
+    } else {
+      const idx = hrsArr.findIndex(d => d.date == date)
+      hrsArr.splice(idx, 1)
+    }
+    setHrsArr([...hrsArr])
+    setAdded([])
+    ptoParams()
+    resetButton()
+  }
+
   const table = (
     <div className="table">
       <div className="row" id="header">
@@ -54,12 +73,7 @@ function App() {
         <h2>Total</h2>
       </div>
       {hrsArr.map((f, i) => (
-        <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
-          <div>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</div>
-          <div>{f.hrs}</div>
-          <div className={f.overMax ? 'over' : ''}>{f.totalHrs}</div>
-          { f.payday ? '' : <button className='delete' onClick={() => resetDates(f.date)}>X</button>}
-        </div>
+        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} />
         )
       )}
     </div>
@@ -95,28 +109,8 @@ function App() {
     resetButton()
   }
 
-  const resetDates = (date: Date | null = null) => {
-    if (!date){
-      let idx = hrsArr.findIndex(d => d.payday == false)
-      while (idx > -1){
-        hrsArr.splice(idx, 1)
-        idx = hrsArr.findIndex(d => d.payday == false)
-      }
-    } else {
-      const idx = hrsArr.findIndex(d => d.date == date)
-      hrsArr.splice(idx, 1)
-    }
-    setHrsArr([...hrsArr])
-    setAdded([])
-    ptoParams()
-    resetButton()
-  }
-
   const hrs = () => (added.map((d, i) => (
-    <div key={i} className="hr-pair">
-      <label>{d.date.toLocaleDateString('en-us', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric'})} Hrs</label>
-      <input type="number" max={8} name={`${i}-hrs`} onChange={handleChange}/>
-    </div>
+    <HourField key={d.date.toISOString()} d={d} i={i} fn={handleChange} />
     ))
   )
 
@@ -152,10 +146,9 @@ function App() {
         <div className="form">
             <form onSubmit={handleSubmit} id='vacayform'>
               <h2>Add Vacation!</h2>
-
               <div className="pair">
-              <label htmlFor="start">Vacation Start Date</label>
-              <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
+                <label htmlFor="start">Vacation Start Date</label>
+                <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
               </div>
               {endDate}
               {hrs()}
@@ -163,13 +156,12 @@ function App() {
             </form>
         </div>
         <div className="pair">
-        <button className="reset" onClick={() => resetDates()}> Reset Vacation Days </button>
+          <button className="reset" onClick={() => resetDates()}> Reset Vacation Days </button>
           <div className="key">
             <div className='over'>Over Max Limit</div>
             <div className='vacay'>Vacation Day!</div>
           </div>
         </div>
-       
         </>
         }
       </div>
