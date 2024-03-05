@@ -48,6 +48,18 @@ function App() {
     }
   }, [startEnd])
 
+  const editDates = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [id, name] = [Number(e.target.name.split('-')[0]), e.target.name.split('-')[1]]
+    console.log(hrsArr[id])
+    const data = name == 'date' ? new Date(e.target.value) : Number(e.target.value)
+    const insert = {[name]: data}
+    hrsArr[id] = {...hrsArr[id], ...insert}
+    console.log(hrsArr[id])
+    setHrsArr([...hrsArr])
+    ptoParams()
+    setHrsArr([...hrsArr])
+  }
+
   const resetDates = (date: Date | null = null) => {
     if (!date){
       let idx = hrsArr.findIndex(d => d.payday == false)
@@ -73,7 +85,7 @@ function App() {
         <h2>Total</h2>
       </div>
       {hrsArr.map((f, i) => (
-        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} />
+        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} editDates={editDates} ptoParams={ptoParams} />
         )
       )}
     </div>

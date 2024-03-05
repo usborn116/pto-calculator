@@ -71,6 +71,21 @@ describe('renders correct hours', async () => {
         expect(screen.queryByText('149')).toBe(null)
         expect(screen.getAllByText('151')).toBeDefined()
     })
+
+    it('edits a single vacation day hours and calculates accordingly', async ({expect}): Promise<void> => {
+        const edits = screen.getAllByText('Edit')
+        const edit1 = edits[1]
+        expect(edit1).toBeDefined()
+        await user.click(edit1)
+        const hrField = screen.getAllByRole('spinbutton')[2]
+        await user.clear(hrField)
+        await user.type(hrField, '-7')
+        await user.click(screen.getByText('Save'))
+        expect(screen.queryByText('-4')).toBe(null)
+        expect(screen.queryByText('-7')).toBeDefined()
+        expect(screen.queryByText('151')).toBe(null)
+        expect(screen.getAllByText('148')).toBeDefined()
+    })
     
     it('resets vacation days', async ({expect}): Promise<void> => {
         const reset = screen.getByText('Reset Vacation Days')
