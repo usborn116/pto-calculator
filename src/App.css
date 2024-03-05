@@ -82,12 +82,20 @@ input[type='number'], input[type='date']{
 
 .row{
   display: grid;
-  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
+  grid-template-columns: 0.5fr 1.5fr 1.2fr 1.2fr ;
   gap: 0.2em;
+  align-items: center;
+  padding-top: 0.25em;
 }
 
 #header{
-  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
+  grid-template-columns: 0.5fr 1.5fr 1.2fr 1.2fr ;
+  align-items: center;
+}
+
+#header > h2{
+  text-align: left;
+  padding-left: 5px;
 }
 
 .row > div{
@@ -98,21 +106,26 @@ input[type='number'], input[type='date']{
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
-.editHourForm{
-  display: grid;
-  grid-template-columns: 1.5fr 1.2fr 1.2fr 0.25fr 0.75fr;
-  padding: 0em;
-}
-
 .editHourForm > input{
-  width: 90%;
+  width: 70%;
 }
 
-#editHourForm > input[type='submit']{
-  width: auto;
-  padding: 0.2em;
-  background-color: transparent;
-  color: red;
+.row > .edit-pair{
+  display: flex;
+  text-align: center;
+  padding-left: 5px;
+  gap: 0.5em;
+  align-items: center;
+}
+
+.row > .edit-pair > p{
+  margin: 0;
+}
+
+.list-logo{
+  height: 15px;
+  border-radius: 5px;
+  padding: 0.5em;
 }
 
 @media (max-width: 750px) {

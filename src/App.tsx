@@ -22,6 +22,7 @@ function App() {
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
+    hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     hrsArr[0]['totalHrs'] = currHrs
     for (let i = 1; i < hrsArr.length; i++){
       if (hrsArr[i]['payday'] == true) hrsArr[i]['hrs'] = acc
@@ -49,12 +50,11 @@ function App() {
   }, [startEnd])
 
   const editDates = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
     const [id, name] = [Number(e.target.name.split('-')[0]), e.target.name.split('-')[1]]
-    console.log(hrsArr[id])
     const data = name == 'date' ? new Date(e.target.value) : Number(e.target.value)
     const insert = {[name]: data}
     hrsArr[id] = {...hrsArr[id], ...insert}
-    console.log(hrsArr[id])
     setHrsArr([...hrsArr])
     ptoParams()
     setHrsArr([...hrsArr])
@@ -80,12 +80,13 @@ function App() {
   const table = (
     <div className="table">
       <div className="row" id="header">
+        <div></div>
         <h2>Date</h2>
         <h2>Hours</h2>
         <h2>Total</h2>
       </div>
       {hrsArr.map((f, i) => (
-        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} editDates={editDates} ptoParams={ptoParams} />
+        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} editDates={editDates}/>
         )
       )}
     </div>
@@ -113,7 +114,6 @@ function App() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     added.forEach(a => hrsArr.push(a))
-    hrsArr.sort((a, b) => a.date.getTime() - b.date.getTime())
     ptoParams()
     setAdded([])
     setHrsArr([...hrsArr])
