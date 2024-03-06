@@ -29,12 +29,13 @@ describe('renders correct hours', async () => {
 
     it('correctly subtracts vacation hours', async ({expect}): Promise<void> => {
         const curr = new Date()
-        const later = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 3)
+        const start = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 1)
+        const later = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 4)
         const initDate = screen.getByLabelText('Vacation Start Date')
         expect(initDate).toBeDefined()
         const buttons = await screen.findAllByRole('spinbutton')
         expect(buttons.length).toBe(2)
-        act(() => fireEvent.change(initDate, {target: {value: curr.toISOString().slice(0,10) }}))
+        act(() => fireEvent.change(initDate, {target: {value: start.toISOString().slice(0,10) }}))
         const endDate = screen.getByLabelText('Vacation End Date')
         expect(endDate).toBeDefined()
         act(() => fireEvent.change(endDate, {target: {value: later.toISOString().slice(0,10) }}))
@@ -46,18 +47,18 @@ describe('renders correct hours', async () => {
         const vhrs4 = buttons2[5]
         await user.type(vhrs, '1')
         await user.type(vhrs2, '2')
-        await user.type(vhrs3, '4')
-        await user.type(vhrs4, '3')
+        await user.type(vhrs3, '3')
+        await user.type(vhrs4, '6')
         const add = screen.getByText('Add it!')
         await user.click(add)
         expect(screen.getByText('-1')).toBeDefined()     
         expect(screen.getByText('-2')).toBeDefined()     
-        expect(screen.getByText('-4')).toBeDefined()     
-        expect(screen.getByText('-3')).toBeDefined()
-        expect(screen.getByText('153')).toBeDefined()     
+        expect(screen.getByText('-3')).toBeDefined()     
+        expect(screen.getByText('-6')).toBeDefined()
         expect(screen.getByText('149')).toBeDefined()     
-        expect(screen.getByText('146')).toBeDefined()     
-        expect(screen.getByText('151')).toBeDefined()
+        expect(screen.getByText('147')).toBeDefined()     
+        expect(screen.getByText('144')).toBeDefined()     
+        expect(screen.getByText('138')).toBeDefined()
     })
     
     
@@ -67,24 +68,41 @@ describe('renders correct hours', async () => {
         expect(delete2).toBeDefined()
         await user.click(delete2)
         expect(screen.queryByText('-2')).toBe(null)
-        expect(screen.queryByText('-4')).toBeDefined()
-        expect(screen.queryByText('149')).toBe(null)
-        expect(screen.getAllByText('151')).toBeDefined()
+        expect(screen.queryByText('-3')).toBeDefined()
+        expect(screen.queryByText('147')).toBe(null)
+        expect(screen.getAllByText('146')).toBeDefined()
     })
 
     it('edits a single vacation day hours and calculates accordingly', async ({expect}): Promise<void> => {
-        const edits = screen.getAllByText('Edit')
-        const edit1 = edits[1]
+        const edits = screen.getAllByRole('img')
+        const edit1 = edits[3]
         expect(edit1).toBeDefined()
         await user.click(edit1)
         const hrField = screen.getAllByRole('spinbutton')[2]
         await user.clear(hrField)
-        await user.type(hrField, '-7')
+        await user.type(hrField, '-5')
         await user.click(screen.getByText('Save'))
-        expect(screen.queryByText('-4')).toBe(null)
-        expect(screen.queryByText('-7')).toBeDefined()
-        expect(screen.queryByText('151')).toBe(null)
-        expect(screen.getAllByText('148')).toBeDefined()
+        expect(screen.queryByText('-3')).toBe(null)
+        expect(screen.queryByText('-5')).toBeDefined()
+        expect(screen.queryByText('146')).toBe(null)
+        expect(screen.getAllByText('143')).toBeDefined()
+    })
+
+    it('edits a single vacation date and calculates accordingly', async ({expect}): Promise<void> => {
+        const curr = new Date()
+        const testDate = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate() + 16)
+        curr.setDate(curr.getDate() + 16)
+        const edits = screen.getAllByRole('img')
+        const edit1 = edits[2]
+        expect(edit1).toBeDefined()
+        await user.click(edit1)
+        expect(screen.getByText('Save')).toBeDefined()
+        const dateField = screen.getByAltText('dateField')
+        expect(dateField).toBeDefined()
+        act(() => fireEvent.change(dateField, {target: {value: testDate.toISOString().slice(0,10) }}))
+        expect(screen.getByText(`${testDate.toLocaleDateString('en-us', { timeZone: 'UTC'})}`)).toBeDefined()
+        expect(screen.queryByText('-5')).toBeDefined()
+        expect(screen.queryAllByText('148').length).toBe(2)
     })
     
     it('resets vacation days', async ({expect}): Promise<void> => {

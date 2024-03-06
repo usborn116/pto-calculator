@@ -28,7 +28,7 @@ export const DateEntry = ({ f, i, resetDates, editDates }: Props) => {
         return (
             <div className="row editHourForm">
                 <button className='delete' onClick={() =>  setEditDate(false)}>Save</button>
-                <input type="date" name={`${i}-date`} defaultValue={f.date.toISOString().slice(0, 10)} onBlur={editDates}/>
+                <input type="date" alt='dateField' name={`${i}-date`} defaultValue={f.date.toISOString().slice(0, 10)} onChange={editDates}/>
                 <div className='edit-pair'>{f.hrs}</div>
                 <div className={`edit-pair ${f.overMax ? 'over' : ''}`}>{f.totalHrs}</div>
             </div>
@@ -40,7 +40,7 @@ export const DateEntry = ({ f, i, resetDates, editDates }: Props) => {
             { f.payday ? <div></div> : <button className='delete' onClick={() => resetDates(f.date)}>X</button>}
             <div className='edit-pair'>
                 <p>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</p>
-                {f.payday ? '' : <img className='list-logo delete' src={edit} onClick={() => setEditDate(true)}></img>}
+                {f.payday ? '' : <img className='list-logo delete' alt={`${i}`} src={edit} onClick={() => setEditDate(true)}></img>}
             </div>
             <div className="edit-pair">
                 <p>{f.hrs}</p>
