@@ -141,11 +141,11 @@ function App() {
         <h2>Initial Information</h2>
         <p>Enter some initial info to see how your vacation time will accrue for the rest of the year!</p>
         <div className="pair">
-        <label>Years @ Planning Center</label><br></br>
+        <label>Years @ Planning Center</label>
         <input type='number' onChange={(e) => setYears(() => Number(e.target.value) > 5 ? 5 : Number(e.target.value))}/>
         </div>
         <div className="pair">
-        <label>Current Vacation Hours</label><br></br>
+        <label>Current Vacation Hours</label>
         <input type='number' onChange={(e) => setCurrHrs(() => Number(e.target.value))}/>
         </div>
         <button onClick={() => ptoParams()}>Calculate Accrual!</button>
@@ -167,7 +167,7 @@ function App() {
               <input type="submit" value="Add it!"></input>
             </form>
         </div>
-        <div className="pair">
+        <div className="pair" id="key-pair">
           <button className="reset" onClick={() => resetDates()}> Reset Vacation Days </button>
           <div className="key">
             <div className='over'>Over Max Limit</div>
