@@ -128,7 +128,7 @@ function App() {
 
   const endDate = startEnd.start ? 
     <div className="pair">
-      <label htmlFor="end">Vacation End Date</label>
+      <label htmlFor="end">Vacation End</label>
       <input type="date" name="end" id="end" defaultValue={`${startEnd.start.toISOString().slice(0,10)}`} onChange={handleStartEndChange}/>
     </div> : ''
 
