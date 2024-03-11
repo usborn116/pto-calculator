@@ -135,11 +135,11 @@ function App() {
   return (
     <>
       <h1>Vacation Planner</h1>
-      <h3>Enter some possible vacation days and see how it affects your accumulated vacation hours over time.</h3>
+      <h3>See how possible days off affect your accumulated vacation hours!</h3>
       <div className="layout">
       <div className="card">
         <h2>Initial Information</h2>
-        <p>Enter some initial info to see how your vacation time will accrue for the rest of the year!</p>
+        <p>Enter some initial info to calculate your accrual currently.</p>
         <div className="pair">
         <label>Years @ Planning Center</label>
         <input type='number' onChange={(e) => setYears(() => Number(e.target.value) > 5 ? 5 : Number(e.target.value))}/>
@@ -159,7 +159,7 @@ function App() {
             <form onSubmit={handleSubmit} id='vacayform'>
               <h2>Add Vacation!</h2>
               <div className="pair">
-                <label htmlFor="start">Vacation Start Date</label>
+                <label htmlFor="start">Vacation Start</label>
                 <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
               </div>
               {endDate}
