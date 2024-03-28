@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
@@ -18,7 +18,6 @@ function App() {
   const [years, setYears] = useState<number>(-1)
   const [currHrs, setCurrHrs] = useState<number>(-1)
   const [hrsArr, setHrsArr] = useState<DateLog[]>([...dates])
-  const [added, setAdded] = useState<DateLog[]>([])
   const [startEnd, setStartEnd] = useState<StartEndDate>({start: null, end: null})
 
   const ptoParams = () => {
@@ -38,17 +37,22 @@ function App() {
     setHrsArr([...hrsArr])
   }
 
-  useEffect(() => {
-    if (startEnd.start && startEnd.end){
+  let newAdded: DateLog[] = []
+  
+  const hrs = () => {
+    if (startEnd.start && startEnd.end) {
       const date = new Date(startEnd.start)
-      const newAdded = []
-      while (date <= startEnd.end){
-        newAdded.push({date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC'})), hrs: 0, payday: false, overMax: false, totalHrs: 0})  
+      newAdded = []
+      while (date <= startEnd.end) {
+        newAdded.push({ date: new Date(new Date(date).toLocaleDateString('en-us', { timeZone: 'UTC' })), hrs: 0, payday: false, overMax: false, totalHrs: 0 })
         date.setDate(date.getDate() + 1)
       }
-      setAdded([...newAdded])
+      return newAdded.map((d, i) => (
+        <HourField key={d.date.toISOString()+i} d={d} i={i} fn={handleChange} />
+      ))
     }
-  }, [startEnd])
+  }
+
 
   const editDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -73,7 +77,7 @@ function App() {
       hrsArr.splice(idx, 1)
     }
     setHrsArr([...hrsArr])
-    setAdded([])
+    newAdded = []
     ptoParams()
     resetButton()
   }
@@ -87,7 +91,7 @@ function App() {
         <h2>Total</h2>
       </div>
       {hrsArr.map((f, i) => (
-        <DateEntry key={f.date.toISOString()} f={f} i={i} id={uuidv4()} resetDates={resetDates} editDates={editDates}/>
+        <DateEntry key={f.date.toISOString()+i} f={f} i={i} id={uuidv4()} resetDates={resetDates} editDates={editDates}/>
         )
       )}
     </div>
@@ -96,8 +100,7 @@ function App() {
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = e.target.name.split('-')[0]
     const value = 0 - Number(e.target?.value)
-    added[Number(id)]['hrs'] = value
-    setAdded([...added])
+    newAdded[Number(id)]['hrs'] = value
   }
 
   const handleStartEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,18 +117,13 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    added.forEach(a => hrsArr.push(a))
+    newAdded.forEach(a => hrsArr.push(a))
     ptoParams()
-    setAdded([])
+    newAdded = []
     setHrsArr([...hrsArr])
     setStartEnd({start: null, end: null})
     resetButton()
   }
-
-  const hrs = () => (added.map((d, i) => (
-    <HourField key={d.date.toISOString()} d={d} i={i} fn={handleChange} />
-    ))
-  )
 
   const endDate = startEnd.start ? 
     <div className="pair">
