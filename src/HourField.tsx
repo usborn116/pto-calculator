@@ -9,7 +9,7 @@ interface Props {
 
 export const HourField = ({ d, i, fn }: Props) => {
     return (
-        <div key={i} className="hr-pair">
+        <div key={d.date.getMonth() + i} className="hr-pair">
             <label>{d.date.toLocaleDateString('en-us', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric'})} Hrs</label>
             <input type="number" max={8} name={`${i}-hrs`} onChange={fn}/>
         </div>

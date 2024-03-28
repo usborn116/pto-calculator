@@ -4,6 +4,7 @@ import { DateLog, StartEndDate } from './Types'
 import { restOfYear, accrualTable } from './Helpers'
 import { DateEntry } from './DateEntry'
 import { HourField } from './HourField'
+import { v4 as uuidv4 } from 'uuid'
 
 const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -86,7 +87,7 @@ function App() {
         <h2>Total</h2>
       </div>
       {hrsArr.map((f, i) => (
-        <DateEntry key={f.date.toISOString()} f={f} i={i} resetDates={resetDates} editDates={editDates}/>
+        <DateEntry key={f.date.toISOString()} f={f} i={i} id={uuidv4()} resetDates={resetDates} editDates={editDates}/>
         )
       )}
     </div>

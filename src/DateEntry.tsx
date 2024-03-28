@@ -6,11 +6,12 @@ import edit from './assets/edit.svg'
 interface Props {
     f: DateLog,
     i: number,
+    id: string,
     resetDates: (arg1: Date) => void,
     editDates: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export const DateEntry = ({ f, i, resetDates, editDates }: Props) => {
+export const DateEntry = ({ f, i, id, resetDates, editDates }: Props) => {
 
     const [editDate, setEditDate] = useState<boolean>(false)
     const [editHrs, setEditHrs] = useState<boolean>(false)
@@ -36,7 +37,7 @@ export const DateEntry = ({ f, i, resetDates, editDates }: Props) => {
     }
 
     return (
-        <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={i}>
+        <div className={`row ${f.overMax ? 'over' : ''} ${f.payday ? '' : 'vacay'}`} key={id}>
             { f.payday ? <div></div> : <button className='delete' onClick={() => resetDates(f.date)}>X</button>}
             <div className='edit-pair'>
                 <p>{i == 0 ? "Today" : f.date.toLocaleDateString('en-us', { timeZone: 'UTC'})}</p>
