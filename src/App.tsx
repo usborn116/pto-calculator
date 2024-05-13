@@ -6,7 +6,7 @@ import { DateEntry } from './DateEntry'
 import { HourField } from './HourField'
 import { v4 as uuidv4 } from 'uuid'
 
-const firsts = [...restOfYear(1), ...restOfYear(16)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
+const firsts = [...restOfYear(10), ...restOfYear(25)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
 if (new Date().getDay() != firsts[0].getDay()) firsts.unshift(new Date())
 
