@@ -5,6 +5,8 @@ import { restOfYear, accrualTable } from './Helpers'
 import { DateEntry } from './DateEntry'
 import { HourField } from './HourField'
 import { v4 as uuidv4 } from 'uuid'
+import { CSVLink } from "react-csv";
+import download from './assets/download.svg'
 
 const firsts = [...restOfYear(10), ...restOfYear(25)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -53,6 +55,14 @@ function App() {
     }
   }
 
+  const csvData = [
+    ['Date', 'Hours', 'Running Total'],
+    ...hrsArr.map(f =>
+      [ f.date.toLocaleDateString('en-us', { timeZone: 'UTC' }),
+        f.hrs,
+        f.totalHrs
+      ])
+  ]
 
   const editDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -84,6 +94,12 @@ function App() {
 
   const table = (
     <div className="table">
+      <div className="export-button">
+        <CSVLink data={csvData} filename={"PTOHours.csv"}>
+          <img className='logo' alt='export-button' src={download} />
+          <span>Export to CSV!</span>
+        </CSVLink>
+      </div>
       <div className="row" id="header">
         <div></div>
         <h2>Date</h2>
