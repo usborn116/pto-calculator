@@ -5,8 +5,8 @@ import { restOfYear, accrualTable } from './Helpers'
 import { DateEntry } from './DateEntry'
 import { HourField } from './HourField'
 import { v4 as uuidv4 } from 'uuid'
-import { CSVLink } from "react-csv";
-import download from './assets/download.svg'
+import { CSVDownload } from "react-csv";
+import downloadIcon from './assets/download.svg'
 
 const firsts = [...restOfYear(10), ...restOfYear(25)].sort((a, b) => a.getTime() - b.getTime()).filter((date) => date > new Date())
 
@@ -20,7 +20,8 @@ function App() {
   const [years, setYears] = useState<number>(-1)
   const [currHrs, setCurrHrs] = useState<number>(-1)
   const [hrsArr, setHrsArr] = useState<DateLog[]>([...dates])
-  const [startEnd, setStartEnd] = useState<StartEndDate>({start: null, end: null})
+  const [startEnd, setStartEnd] = useState<StartEndDate>({ start: null, end: null })
+  const [download, setDownload] = useState<boolean>(false)
 
   const ptoParams = () => {
     const acc = accrualTable[years]['rate']
@@ -55,15 +56,6 @@ function App() {
     }
   }
 
-  const csvData = [
-    ['Date', 'Hours', 'Running Total'],
-    ...hrsArr.map(f =>
-      [ f.date.toLocaleDateString('en-us', { timeZone: 'UTC' }),
-        f.hrs,
-        f.totalHrs
-      ])
-  ]
-
   const editDates = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     const [id, name] = [Number(e.target.name.split('-')[0]), e.target.name.split('-')[1]]
@@ -92,13 +84,32 @@ function App() {
     resetButton()
   }
 
+  const csvData = ():(string | number)[][]  => { 
+    const data = hrsArr.map(f =>
+      [ f.date.toLocaleDateString('en-us', { timeZone: 'UTC' }),
+        f.hrs,
+        f.totalHrs
+      ])
+    
+    return [
+      ['Date', 'Hours', 'Running Total'],
+      ...data
+    ]
+  }
+
+  const handleDownload = async () => {
+    setDownload(() => true)
+    setTimeout(() => setDownload(() => false), 300)
+  }
+
   const table = (
     <div className="table">
       <div className="export-button">
-        <CSVLink data={csvData} filename={"PTOHours.csv"}>
-          <img className='logo' alt='export-button' src={download} />
+        {download ? <CSVDownload data={csvData()} target="_self"/> : ''}
+        <a onClick={handleDownload}>
+          <img className='logo' alt='export-button' src={downloadIcon} />
           <span>Export to CSV!</span>
-        </CSVLink>
+        </a>
       </div>
       <div className="row" id="header">
         <div></div>

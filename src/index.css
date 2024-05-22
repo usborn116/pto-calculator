@@ -18,6 +18,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
   height: 1.2em;
+  cursor: pointer;
 }
 
 a:hover {

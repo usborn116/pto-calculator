@@ -17,4 +17,4 @@ export const accrualTable: HrParam[]= [{rate: 3.34, max: 120},
     {rate: 4.0, max: 144},
     {rate: 4.34, max: 156},
     {rate: 4.67, max: 168},
-    {rate: 5.0, max: 180}]
+    {rate: 5.0, max: 180 }]
