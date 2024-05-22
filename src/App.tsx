@@ -99,13 +99,19 @@ function App() {
 
   const handleDownload = async () => {
     setDownload(() => true)
-    setTimeout(() => setDownload(() => false), 300)
+    setTimeout(() => setDownload(() => false), 2000)
   }
 
   const table = (
     <div className="table">
       <div className="export-button">
-        {download ? <CSVDownload data={csvData()} target="_self"/> : ''}
+        {download ? 
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <CSVDownload data={csvData()} target="_self" />
+            <p className='banner alert'>Downloading now!</p>
+          </div>
+          : ''
+        }
         <a onClick={handleDownload}>
           <img className='logo' alt='export-button' src={downloadIcon} />
           <span>Export to CSV!</span>
