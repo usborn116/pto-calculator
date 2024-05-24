@@ -29,7 +29,7 @@ export const DateEntry = ({ f, i, id, resetDates, editDates }: Props) => {
         return (
             <div className="row editHourForm">
                 <button className='delete' onClick={() =>  setEditDate(false)}>Save</button>
-                <input type="date" alt='dateField' name={`${i}-date`} defaultValue={f.date.toISOString().slice(0, 10)} onBlur={editDates}/>
+                <input type="date" min={new Date().toISOString().split('T')[0]} alt='dateField' name={`${i}-date`} defaultValue={f.date.toISOString().slice(0, 10)} onBlur={editDates}/>
                 <div className='edit-pair'>{f.hrs}</div>
                 <div className={`edit-pair ${f.overMax ? 'over' : ''}`}>{f.totalHrs}</div>
             </div>
