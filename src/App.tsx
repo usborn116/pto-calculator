@@ -161,7 +161,7 @@ function App() {
   const endDate = startEnd.start ? 
     <div className="pair">
       <label htmlFor="end">Vacation End</label>
-      <input type="date" name="end" id="end" defaultValue={`${startEnd.start.toISOString().slice(0,10)}`} onChange={handleStartEndChange}/>
+      <input autoFocus type="date" min={new Date(startEnd.start).toISOString().split('T')[0]} name="end" id="end" defaultValue={`${startEnd.start.toISOString().slice(0,10)}`} onChange={handleStartEndChange}/>
     </div> : ''
 
   return (
@@ -192,7 +192,7 @@ function App() {
               <h2>Add Vacation!</h2>
               <div className="pair">
                 <label htmlFor="start">Vacation Start</label>
-                <input type="date" name="start" id="start" onChange={handleStartEndChange}/>
+                  <input type="date" min={new Date().toISOString().split('T')[0]} name="start" id="start" onChange={handleStartEndChange}/>
               </div>
               {endDate}
               {hrs()}
